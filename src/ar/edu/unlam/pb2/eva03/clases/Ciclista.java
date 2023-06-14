@@ -1,6 +1,8 @@
 package ar.edu.unlam.pb2.eva03.clases;
 
 import ar.edu.unlam.pb2.eva03.enumeradores.TipoDeBicicleta;
+import ar.edu.unlam.pb2.eva03.enumeradores.TipoDeEvento;
+
 
 public class Ciclista extends Socio{
 	
@@ -24,5 +26,9 @@ public class Ciclista extends Socio{
 	}
 	
 	
+	public TipoDeEvento[] getTipo() {
+		// TODO Auto-generated method stub
+		return new TipoDeEvento[] {TipoDeEvento.CARRERA_BICICLETA};
+	}
 
 }

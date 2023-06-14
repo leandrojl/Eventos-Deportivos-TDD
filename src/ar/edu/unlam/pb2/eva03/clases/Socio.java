@@ -2,7 +2,10 @@ package ar.edu.unlam.pb2.eva03.clases;
 
 import java.util.Objects;
 
-public class Socio {
+import ar.edu.unlam.pb2.eva03.enumeradores.TipoDeEvento;
+
+
+public abstract class Socio {
 	
 	Integer numeroDeSocio;
 	String nombre;
@@ -16,6 +19,8 @@ public class Socio {
 	public Socio() {
 		
 	}
+	
+	public abstract TipoDeEvento[] getTipo();
 
 	public Integer getNumeroDeSocio() {
 		return numeroDeSocio;

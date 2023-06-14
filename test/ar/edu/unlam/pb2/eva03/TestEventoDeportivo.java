@@ -2,8 +2,10 @@ package ar.edu.unlam.pb2.eva03;
 
 import static org.junit.Assert.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import ar.edu.unlam.pb2.eva03.clases.Acuatleta;
 import ar.edu.unlam.pb2.eva03.clases.Ciclista;
 import ar.edu.unlam.pb2.eva03.clases.Corredor;
 import ar.edu.unlam.pb2.eva03.clases.Nadador;
@@ -11,7 +13,9 @@ import ar.edu.unlam.pb2.eva03.clases.Socio;
 import ar.edu.unlam.pb2.eva03.clases.Triatleta;
 import ar.edu.unlam.pb2.eva03.enumeradores.TipoDeBicicleta;
 import ar.edu.unlam.pb2.eva03.enumeradores.TipoDeEvento;
+import ar.edu.unlam.pb2.eva03.excepciones.EventoInexistenteException;
 import ar.edu.unlam.pb2.eva03.excepciones.NoEstaPreparadoException;
+import ar.edu.unlam.pb2.eva03.excepciones.SocioInexistenteException;
 
 public class TestEventoDeportivo {
 	
@@ -36,7 +40,7 @@ public class TestEventoDeportivo {
 	public void  queSePuedaCrearUnCiclista() {
 		Ciclista nuevo = new Ciclista(3, "Enzo", TipoDeBicicleta.RUTA);
 
-		assertEquals("Ruta", nuevo.getTipoDeBicicleta());
+		assertEquals(TipoDeBicicleta.RUTA, nuevo.getTipoDeBicicleta());
 		assertEquals((Integer) 3, nuevo.getNumeroDeSocio());
 	}
 
@@ -70,35 +74,40 @@ public class TestEventoDeportivo {
 	}
 	
 	@Test (expected = NoEstaPreparadoException.class)
-	public void  queUnCorredorNoSePuedaInscribirEnUnaCarreraDeNatacion () throws NoEstaPreparadoException{	
+	public void  queUnCorredorNoSePuedaInscribirEnUnaCarreraDeNatacion () throws NoEstaPreparadoException, EventoInexistenteException, SocioInexistenteException{	
 		// En las carreras de natación sólo pueden inscribirse los que sean INadador
 		Socio celeste = new Corredor(1000, "Celeste", 10000);
 		Club actual = new Club("Sitas");
 		actual.agregarDeportista(celeste);
 		actual.crearEvento(TipoDeEvento.CARRERA_NATACION_EN_AGUAS_ABIERTAS, "Maraton de aguas abiertas");
+		actual.inscribirEnEvento("Maraton de aguas abiertas", celeste);
 		
-		assertNotEquals((Integer)1, actual.inscribirEnEvento("Maraton de aguas abiertas", celeste));		
+		
+			
 	}
 	
 	@Test (expected = NoEstaPreparadoException.class)
-	public void  queUnCorredorNoSePuedaInscribirEnUnTriatlon () throws NoEstaPreparadoException{		
+	public void  queUnCorredorNoSePuedaInscribirEnUnTriatlon () throws NoEstaPreparadoException, EventoInexistenteException, SocioInexistenteException{		
 		// En los triatlones sólo pueden inscribirse los que sean INadador & ICiclista
 		Socio celeste = new Corredor(1000, "Celeste", 10000);
 		Club actual = new Club("Sitas");
 		
+		actual.agregarDeportista(celeste);
 		actual.crearEvento(TipoDeEvento.TRIATLON_IRONMAN, "Triatlon Khona");
-		
-		assertNotEquals((Integer)1, actual.inscribirEnEvento("Triatlon Khona", celeste));		
+		actual.inscribirEnEvento("Triatlon Khona", celeste);
+				
 	}
 	
 	@Test
-	public void  queUnCorredorPuedaCorrerUnaMaraton() throws NoEstaPreparadoException{		
+	public void  queUnCorredorPuedaCorrerUnaMaraton() throws NoEstaPreparadoException, EventoInexistenteException, SocioInexistenteException{		
 		Socio celeste = new Corredor(999, "Celeste", 42000);
 		Club actual = new Club("Moron");
 				
-		((Corredor)celeste).setCantidadDeKilometrosEntrenados(100000);
-		actual.crearEvento(TipoDeEvento.CARRERA_42K, "Maraton de New York");
 		
-		assertEquals((Integer)1, actual.inscribirEnEvento("Maraton de New York", celeste));			
+		actual.agregarDeportista(celeste);
+		actual.crearEvento(TipoDeEvento.CARRERA_42K, "Maraton de New York");
+		actual.inscribirEnEvento("Maraton de New York", celeste);
+		
+		Assert.assertTrue(actual.getCompetencias().get("Maraton de New York").getParticipantes().get(celeste.getNumeroDeSocio()).equals(celeste));	
 	}
 }

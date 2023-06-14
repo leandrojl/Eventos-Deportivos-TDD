@@ -9,6 +9,10 @@ import java.util.Set;
 import ar.edu.unlam.pb2.eva03.clases.Corredor;
 import ar.edu.unlam.pb2.eva03.clases.Socio;
 import ar.edu.unlam.pb2.eva03.enumeradores.TipoDeEvento;
+import ar.edu.unlam.pb2.eva03.excepciones.EventoInexistenteException;
+import ar.edu.unlam.pb2.eva03.excepciones.NoEstaPreparadoException;
+import ar.edu.unlam.pb2.eva03.excepciones.SocioInexistenteException;
+
 
 
 public class Club {
@@ -63,14 +67,67 @@ public class Club {
 		
 	}
 
-	public void crearEvento(TipoDeEvento carreraNatacionEnAguasAbiertas, String string) {
-		// TODO Auto-generated method stub
+	public void crearEvento(TipoDeEvento tipoEvento, String nombreEvento) {
+		Evento evento = crearUnEvento(nombreEvento, tipoEvento);
+		this.competencias.put(nombreEvento, evento);
+	}
+
+	private Evento crearUnEvento(String nombreEvento, TipoDeEvento tipoEvento) {
+		
+		return new Evento(nombreEvento, tipoEvento);
+	}
+
+	public Object inscribirEnEvento(String eventoDeportivo, Socio socio) throws EventoInexistenteException, SocioInexistenteException, NoEstaPreparadoException {
+		//1) Buscar evento
+		//2)Buscar deportista
+		//3) Agregar deportista al evento
+		Evento evento = buscarEventoDeportivo(eventoDeportivo);
+		Socio deportista = buscarDeportista(socio);
+		agregarDeportistaAlEvento(evento, deportista);
+		
+		return null;
+	}
+
+	private void agregarDeportistaAlEvento(Evento evento, Socio deportista) throws NoEstaPreparadoException {
+		validarDeportista(evento, deportista);
+		evento.agregarDeportista(deportista);
 		
 	}
 
-	public Object inscribirEnEvento(String string, Socio celeste) {
-		// TODO Auto-generated method stub
-		return null;
+	private Boolean validarDeportista(Evento evento, Socio deportista) throws NoEstaPreparadoException {
+		
+		for(int i=0; i<deportista.getTipo().length;i++) {
+			if(deportista.getTipo()[i].equals(evento.getTipo())) {
+				return true;
+			}
+		}
+		
+		throw new NoEstaPreparadoException("No esta preparado para ese evento");
+		
+	}
+
+	private Socio buscarDeportista(Socio socio) throws SocioInexistenteException {
+		
+		for(Socio deportista: socios) {
+				if(deportista.getNumeroDeSocio().equals(socio.getNumeroDeSocio())) {
+				
+				return deportista;
+				
+			}
+		}
+		
+		 throw new SocioInexistenteException("socio inexistente");
+		
+	}
+
+	private Evento buscarEventoDeportivo(String eventoDeportivo) throws EventoInexistenteException {
+		
+		if(this.competencias.containsKey(eventoDeportivo)) {
+			
+			return this.competencias.get(eventoDeportivo);
+		}
+		
+		throw new EventoInexistenteException("Evento inexistente");
 	}
 	
 	
